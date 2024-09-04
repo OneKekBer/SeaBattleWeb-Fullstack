@@ -1,9 +1,35 @@
+using Microsoft.EntityFrameworkCore;
+using SeaBattleWeb.Data.Context;
+using SeaBattleWeb.Data.Repository;
+using SeaBattleWeb.Data.Repository.Interfaces;
+using SeaBattleWeb.Server.Hubs;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddSignalR();
+builder.Services.AddLogging();
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+builder.Services.AddDbContext<AppDatabaseContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        policy =>
+        {
+            policy.SetIsOriginAllowed(_ => true)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+
+});
+
+builder.Services.AddScoped<IGameRepository, GameRepository>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -25,6 +51,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapFallbackToFile("/index.html");
+app.MapHub<GameHub>("/chatHub");
 
 app.Run();

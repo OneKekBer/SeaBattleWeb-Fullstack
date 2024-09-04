@@ -11,4 +11,8 @@
     <Folder Include="Domains\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SeaBattleWeb.Data\SeaBattleWeb.Data.csproj" />
+  </ItemGroup>
+
 </Project>
