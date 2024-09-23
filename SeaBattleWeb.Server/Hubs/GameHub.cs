@@ -23,6 +23,7 @@ namespace SeaBattleWeb.Server.Hubs
 
         public async Task Connect()
         {
+
             // return all games what Idle
             var games = await _gameRepository.GetIdleGames();
             await Clients.Client(Context.ConnectionId).GetAllGames(games);
@@ -38,10 +39,7 @@ namespace SeaBattleWeb.Server.Hubs
 
         public async Task ConnectToExistingGame() 
         {
-        
+            
         }
-
-
-
     }
 }

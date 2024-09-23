@@ -21,5 +21,8 @@ namespace SeaBattleWeb.Data.Context
         }
 
         public DbSet<Game> Games { get; set; }
+
+        public DbSet<Board> Boards { get; set; }
+
     }
 }

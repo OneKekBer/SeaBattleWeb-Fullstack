@@ -22,4 +22,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SeaBattleWeb.Business\SeaBattleWeb.Business.csproj" />
+    <ProjectReference Include="..\SeaBattleWeb.Data\SeaBattleWeb.Data.csproj" />
+    <ProjectReference Include="..\SeaBattleWeb.Server\SeaBattleWeb.Server.csproj" />
+  </ItemGroup>
+
 </Project>

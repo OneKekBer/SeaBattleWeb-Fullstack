@@ -1,56 +1,35 @@
-import { useEffect, useState } from 'react';
-import './App.css';
-
-interface Forecast {
-    date: string;
-    temperatureC: number;
-    temperatureF: number;
-    summary: string;
-}
-
+import { Route, Routes } from 'react-router-dom'
+import LobbyPage from './pages/lobby/LobbyPage'
+import WebSocket from './WebSocket'
+import { useEffect } from 'react'
+import { useAppDispatch } from 'store/Hooks'
+import { addGames } from 'store/slices/GameSlice'
+import GamePage from 'pages/game/GamePage'
 function App() {
-    const [forecasts, setForecasts] = useState<Forecast[]>();
+	const webSocket = new WebSocket()
+	const dispatch = useAppDispatch()
 
-    useEffect(() => {
-        populateWeatherData();
-    }, []);
-
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-        : <table className="table table-striped" aria-labelledby="tabelLabel">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
-            </thead>
-            <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>;
-
-    return (
-        <div>
-            <h1 id="tabelLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
-        </div>
-    );
-
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        const data = await response.json();
-        setForecasts(data);
-    }
+	useEffect(() => {
+		webSocket.GetAllGames(games => {
+			console.log(games)
+			dispatch(addGames(games))
+		})
+	}, [])
+	return (
+		<div className='light'>
+			<Routes>
+				<Route
+					element={
+						<LobbyPage
+							ConnectToExistingGame={webSocket.ConnectToExistingGame}
+						/>
+					}
+					path='/'
+				/>
+				<Route element={<GamePage />} path='/game/:id' />
+			</Routes>
+		</div>
+	)
 }
 
-export default App;
+export default App

@@ -11,8 +11,11 @@ builder.Services.AddSignalR();
 builder.Services.AddLogging();
 builder.Services.AddControllers();
 
+
 builder.Services.AddDbContext<AppDatabaseContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
+
+
 
 
 builder.Services.AddCors(options =>
@@ -29,6 +32,8 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddScoped<IGameRepository, GameRepository>();
+builder.Services.AddScoped<IBoardRepositroy, BoardRepository>();
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -46,6 +51,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseCors("AllowAllOrigin");
+
 
 app.UseAuthorization();
 
