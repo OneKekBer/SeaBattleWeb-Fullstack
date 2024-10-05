@@ -2,21 +2,46 @@ import React, { useState } from 'react'
 
 interface PanelComponentProps {
 	ownCoords: string
+	currentBoardId: string | null
 }
 
 type IPanelState = 'Empty' | 'ContainsShip' | 'Shooted' | 'Miss'
+interface IData {
+	status: IPanelState
+}
 
-const PanelComponent: React.FC<PanelComponentProps> = ({ ownCoords }) => {
+const PanelComponent: React.FC<PanelComponentProps> = ({
+	ownCoords,
+	currentBoardId,
+}) => {
 	const [panelState, setPanelState] = useState<IPanelState>('Empty')
 
 	const shootToPanel = async () => {
-		const res = await fetch((process.env.VITE_API_URL as string) + '/', {})
+		const res = await fetch(
+			import.meta.env.VITE_API_URL + 'api/board/shoot-board',
+			{
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					boardId: currentBoardId,
+					coords: {
+						X: Number(ownCoords.split('-')[1]),
+						Y: Number(ownCoords.split('-')[0]),
+					},
+				}),
+			}
+		)
+
+		if (res.ok) {
+			const data: IData = await res.json()
+			console.log(data.status)
+			setPanelState(data.status)
+		}
 	}
 
 	const handleClick = () => {
 		console.log(ownCoords)
-		// Пример изменения состояния панели при клике (можно доработать логику)
-		setPanelState('Shooted')
+		shootToPanel()
 	}
 
 	return (

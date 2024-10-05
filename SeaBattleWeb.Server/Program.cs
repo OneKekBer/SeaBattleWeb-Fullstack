@@ -32,7 +32,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddScoped<IGameRepository, GameRepository>();
-builder.Services.AddScoped<IBoardRepositroy, BoardRepository>();
+builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 
 
 builder.Services.AddEndpointsApiExplorer();
@@ -54,7 +54,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
-app.UseCors("AllowAllOrigin");
+app.UseCors("AllowAllOrigins");
 
 
 app.UseAuthorization();

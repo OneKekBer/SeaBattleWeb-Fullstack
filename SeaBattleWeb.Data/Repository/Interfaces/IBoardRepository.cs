@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SeaBattleWeb.Data.Repository.Interfaces
 {
-    public interface IBoardRepositroy : IRepository<Board>
+    public interface IBoardRepository : IRepository<Board>
     {
     }
 }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SeaBattleWeb.Data.Repository
 {
-    public class BoardRepository : IBoardRepositroy
+    public class BoardRepository : IBoardRepository
     {
         private readonly AppDatabaseContext _apiDatabase;
         public BoardRepository(AppDatabaseContext database)
@@ -22,8 +22,6 @@ namespace SeaBattleWeb.Data.Repository
         {
             await _apiDatabase.Boards.AddAsync(entity);
             await _apiDatabase.SaveChangesAsync();
-
-            throw new NotImplementedException();
         }
 
         public Task<IEnumerable<Board>> GetAll()
@@ -33,7 +31,7 @@ namespace SeaBattleWeb.Data.Repository
 
         public async Task<Board> GetById(Guid id)
         {
-            var board = await _apiDatabase.Boards.SingleAsync((x) => x.Id == id) ?? throw new Exception("");
+            var board = await _apiDatabase.Boards.FirstOrDefaultAsync((x) => x.Id == id) ?? throw new Exception($"board GetById not found with id:{id}");
 
             return board;
         }

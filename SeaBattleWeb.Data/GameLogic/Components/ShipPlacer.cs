@@ -21,14 +21,8 @@ namespace SeaBattleWeb.GameLogic.Components
 {
     public class ShipPlacer
     {
-        private Board _board;
         Random random = new Random();
         //List<Coordinates> allShipsPositions = new List<Coordinates>();
-
-        public ShipPlacer(Board Board)
-        {
-            _board = Board;
-        }
 
         public void FillEmptyBoard(Board board) // пиздец 
         {
@@ -41,24 +35,26 @@ namespace SeaBattleWeb.GameLogic.Components
             }
         }
 
-        public void AddShipsToBoard(IEnumerable<Coordinates> coords, Ship ship)
+        public void ShootToPanel(Board board, Coordinates coords)
+        {
+            var panel = board.board[coords.X, coords.Y];
+
+            if (panel.PanelState == PanelState.ContainsShip)
+            {
+                panel.RegisterShot();
+            }
+
+
+        }
+
+        public void AddShipsToBoard(Board board, IEnumerable<Coordinates> coords, Ship ship)
         {
             foreach(var coord in coords)
             {
-                _board.board[coord.Y, coord.X].PlaceShip(ship);
+                board.board[coord.Y, coord.X].PlaceShip(ship);
                 
             }
         }
-
-        //public void PlaceShip(Ship ship)
-        //{
-        //    List<Coordinates> options = GetShipOptions(ship);
-
-        //    foreach (Coordinates coords in options)
-        //    {
-        //        board[coords].PlaceShip(ship);
-        //    }
-        //}
 
         public IEnumerable<Coordinates> GetShipCoordinates(Board board,int shipSize)
         {
@@ -93,7 +89,7 @@ namespace SeaBattleWeb.GameLogic.Components
                             break; 
                         }
 
-                        if (_board.board[newCoord.Y, newCoord.X].PanelState != PanelState.Empty)
+                        if (board.board[newCoord.Y, newCoord.X].PanelState != PanelState.Empty)
                         {
                             isPossibleToPlaceShip = false;
                             break;
