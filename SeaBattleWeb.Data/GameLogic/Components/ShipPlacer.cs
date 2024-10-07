@@ -26,18 +26,18 @@ namespace SeaBattleWeb.GameLogic.Components
 
         public void FillEmptyBoard(Board board) // пиздец 
         {
-            for (int i = 0; i < board.board.GetLength(0); i++)
+            for (int i = 0; i < board.board.Count(); i++)
             {
-                for (int j = 0; j < board.board.GetLength(1); j++)
+                for (int j = 0; j < board.board.Count() + 1; j++)
                 {
-                    board.board[i, j] = new Panel();
+                    board[new Coordinates(i, j)] = new Panel();
                 }
             }
         }
 
         public void ShootToPanel(Board board, Coordinates coords)
         {
-            var panel = board.board[coords.X, coords.Y];
+            var panel = board[coords];
 
             if (panel.PanelState == PanelState.ContainsShip)
             {
@@ -51,7 +51,7 @@ namespace SeaBattleWeb.GameLogic.Components
         {
             foreach(var coord in coords)
             {
-                board.board[coord.Y, coord.X].PlaceShip(ship);
+                board[coord].PlaceShip(ship);
                 
             }
         }
@@ -89,7 +89,7 @@ namespace SeaBattleWeb.GameLogic.Components
                             break; 
                         }
 
-                        if (board.board[newCoord.Y, newCoord.X].PanelState != PanelState.Empty)
+                        if (board[new Coordinates(newCoord.X, newCoord.Y)].PanelState != PanelState.Empty)
                         {
                             isPossibleToPlaceShip = false;
                             break;

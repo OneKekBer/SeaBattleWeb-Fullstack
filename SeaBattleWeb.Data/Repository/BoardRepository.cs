@@ -20,6 +20,7 @@ namespace SeaBattleWeb.Data.Repository
 
         public async Task Add(Board entity)
         {
+            entity.SerializeArray();
             await _apiDatabase.Boards.AddAsync(entity);
             await _apiDatabase.SaveChangesAsync();
         }
@@ -32,7 +33,7 @@ namespace SeaBattleWeb.Data.Repository
         public async Task<Board> GetById(Guid id)
         {
             var board = await _apiDatabase.Boards.FirstOrDefaultAsync((x) => x.Id == id) ?? throw new Exception($"board GetById not found with id:{id}");
-
+            board.DeserializeArray();
             return board;
         }
 

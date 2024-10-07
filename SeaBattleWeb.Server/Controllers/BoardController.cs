@@ -30,8 +30,8 @@ namespace SeaBattleWeb.Server.Controllers
 
             var coords = shipPlacer.GetShipCoordinates(new Cruiser().Size);
             shipPlacer.FillEmptyBoard(board);
-            _logger.LogError($"create board {(board.board[4, 3] == null ? "null" : "not null")}");
-            _logger.LogError($"create board {(board.board[4, 3].PanelState.ToString())}");
+            _logger.LogError($"create board {(board[new Coordinates(4, 3)] == null ? "null" : "not null")}");
+            _logger.LogError($"create board {(board[new Coordinates(4, 3)].PanelState.ToString())}");
 
             shipPlacer.AddShipsToBoard(board, coords, new Cruiser());
 
@@ -69,13 +69,13 @@ namespace SeaBattleWeb.Server.Controllers
             }
 
             // Safe logging after null check
-            _logger.LogInformation($"Board ID: {board.Id}, Board Length: {board.board.Length}");
+            _logger.LogInformation($"Board ID: {board.Id}, Board Length: {board.board.Count}");
 
             await Console.Out.WriteLineAsync();
 
             //var panelState = board.board[dto.coords.Y, dto.coords.X].PanelState;
 
-            return Ok(new { status = board.board[1, 1] });
+            return Ok(new { status = board[new Coordinates(1, 1)] });
         }
 
         public record ShootToBoardDTO(Guid boardId, Coordinates coords);
@@ -95,8 +95,8 @@ namespace SeaBattleWeb.Server.Controllers
             }
 
             // Safe logging after null check
-            _logger.LogInformation($"Board ID: {board.Id}, Board Length: {board.board.Length}");
-            _logger.LogError($"Board ID: {board.Id}, Board Element at [4,3]: {(board.board[4, 3] == null ? "null" : "not null")}");
+            _logger.LogInformation($"Board ID: {board.Id}, Board Length: {board.board.Count}");
+            _logger.LogError($"Board ID: {board.Id}, Board Element at [4,3]: {(board[new Coordinates(4, 3)] == null ? "null" : "not null")}");
 
 
             return Ok();

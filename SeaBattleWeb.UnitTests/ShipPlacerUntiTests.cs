@@ -1,5 +1,6 @@
 ﻿using SeaBattleWeb.Data.Entities;
 using SeaBattleWeb.Data.GameLogic.Models.Board;
+using SeaBattleWeb.Data.GameLogic.Models.Values;
 using SeaBattleWeb.GameLogic.Components;
 using SeaBattleWeb.GameLogic.Models;
 using Xunit.Abstractions;
@@ -26,16 +27,16 @@ namespace SeaBattleWeb.UnitTests
             shipPlacer.FillEmptyBoard(board);
 
             //Assert
-            Assert.IsType<Panel>(board.board[5, 5]);
-            Assert.IsType<Panel>(board.board[0, 0]);
+            Assert.IsType<Panel>(board[new Coordinates(5, 5)]);
+            Assert.IsType<Panel>(board[new Coordinates (0, 0)]);
 
             // Check if the entire board is filled with empty panels
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
-                    Assert.NotNull(board.board[i, j]);
-                    Assert.Equal(PanelState.Empty, board.board[i, j].PanelState);
+                    Assert.NotNull(board[new Coordinates(i, j)]);
+                    Assert.Equal(PanelState.Empty, board[new Coordinates(i, j)].PanelState);
                 }
             }
         }
@@ -77,8 +78,8 @@ namespace SeaBattleWeb.UnitTests
             //Assert
             foreach (var coord in coords)
             {
-                Assert.Equal(PanelState.ContainsShip, board.board[coord.Y, coord.X].PanelState);
-                _output.WriteLine($"{coord.Y} {coord.X} state:{board.board[coord.Y, coord.X].PanelState.ToString()}");
+                Assert.Equal(PanelState.ContainsShip, board[coord].PanelState);
+                _output.WriteLine($"{coord.Y} {coord.X} state:{board[coord].PanelState.ToString()}");
             }
         }
 
@@ -97,8 +98,8 @@ namespace SeaBattleWeb.UnitTests
 
             foreach (var coord in coords)
             {
-                Assert.Equal(PanelState.ContainsShip, board.board[coord.Y, coord.X].PanelState);
-                _output.WriteLine($"{coord.Y} {coord.X} state:{board.board[coord.Y, coord.X].PanelState.ToString()}");
+                Assert.Equal(PanelState.ContainsShip, board[coord].PanelState);
+                _output.WriteLine($"{coord.Y} {coord.X} state:{board[coord].PanelState.ToString()}");
             }
 
         }
