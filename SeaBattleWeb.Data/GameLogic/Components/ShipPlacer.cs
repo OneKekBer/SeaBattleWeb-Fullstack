@@ -30,7 +30,7 @@ namespace SeaBattleWeb.GameLogic.Components
             {
                 for (int j = 0; j < board.board.GetLength(1); j++)
                 {
-                    board.board[i, j] = new Panel();
+                    board[new Coordinates(i, j)] = new Panel();
                 }
             }
         }
@@ -51,7 +51,7 @@ namespace SeaBattleWeb.GameLogic.Components
         {
             foreach(var coord in coords)
             {
-                board.board[coord.Y, coord.X].PlaceShip(ship);
+                board[coord].PlaceShip(ship);
                 
             }
         }
