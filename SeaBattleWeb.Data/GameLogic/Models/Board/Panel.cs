@@ -13,24 +13,16 @@ namespace SeaBattleWeb.Data.GameLogic.Models.Board
 
     public class Panel
     {
-        public PanelState PanelState { get; private set; } = PanelState.Empty;
-
-        public Ship Ship { get; set; }
+        public PanelState PanelState { get; set; } = PanelState.Empty;
 
         public void PlaceShip(Ship ship)
         {
-            if (Ship is not null)
-            {
-                throw new Exception("");
-                //return;
-            }
             PanelState = PanelState.ContainsShip;
-            Ship = ship;
         }
 
         public void RegisterShot()
         {
-            if (Ship is not null)
+            if (PanelState == PanelState.ContainsShip)
                 PanelState = PanelState.Shooted;
             else
                 PanelState = PanelState.Miss;

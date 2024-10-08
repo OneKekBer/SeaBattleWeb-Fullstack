@@ -28,15 +28,17 @@ namespace SeaBattleWeb.Server.Controllers
             var board = new Board();
             var shipPlacer = new ShipPlacer();
 
-            var coords = shipPlacer.GetShipCoordinates(new Cruiser().Size);
             shipPlacer.FillEmptyBoard(board);
+            var coords = shipPlacer.GetShipCoordinates(board, new Cruiser().Size);
+            shipPlacer.AddShipsToBoard(board, coords, new Cruiser());
+
+
             _logger.LogError($"create board {(board.board[4, 3] == null ? "null" : "not null")}");
             _logger.LogError($"create board {(board.board[4, 3].PanelState.ToString())}");
 
-            shipPlacer.AddShipsToBoard(board, coords, new Cruiser());
 
             await _boardRepository.Add(board);
-            return Ok(new { BoardId = board.Id });
+            return Ok(new { BoardId = board.Id, Coords = coords });
         }
 
         [HttpGet]
@@ -45,7 +47,7 @@ namespace SeaBattleWeb.Server.Controllers
             var board = new Board();
 
             var shipPlacer = new ShipPlacer();
-            var coords = shipPlacer.GetShipCoordinates(new Cruiser().Size);
+            var coords = shipPlacer.GetShipCoordinates(board,new Cruiser().Size);
 
             shipPlacer.FillEmptyBoard(board);
             shipPlacer.AddShipsToBoard(board, coords, new Cruiser());
@@ -68,25 +70,22 @@ namespace SeaBattleWeb.Server.Controllers
                 return BadRequest("Board not found or not initialized");
             }
 
-            // Safe logging after null check
+            
+
             _logger.LogInformation($"Board ID: {board.Id}, Board Length: {board.board.Length}");
 
-            await Console.Out.WriteLineAsync();
 
-            //var panelState = board.board[dto.coords.Y, dto.coords.X].PanelState;
-
-            return Ok(new { status = board.board[1, 1] });
+            return Ok(new { Status = board[new Coordinates(dto.coords.X, dto.coords.Y)].PanelState.ToString()});
         }
 
         public record ShootToBoardDTO(Guid boardId, Coordinates coords);
-        public record GetPanelStatusDTO(int x, int y, Guid id);
 
         [HttpPost("panel-status")]
-        public async Task<IActionResult> GetPanelStatus([FromBody] GetPanelStatusDTO dto)
+        public async Task<IActionResult> GetPanelStatus([FromBody] ShootToBoardDTO dto)
         {
             //_logger.LogInformation($"shoot to board id: {dto.boardId} coords x: {dto.coords.X}, y: {dto.coords.Y}");
 
-            var board = await _boardRepository.GetById(dto.id);
+            var board = await _boardRepository.GetById(dto.boardId);
 
             if (board == null || board.board == null)
             {
@@ -94,12 +93,11 @@ namespace SeaBattleWeb.Server.Controllers
                 return BadRequest("Board not found or not initialized");
             }
 
-            // Safe logging after null check
-            _logger.LogInformation($"Board ID: {board.Id}, Board Length: {board.board.Length}");
-            _logger.LogError($"Board ID: {board.Id}, Board Element at [4,3]: {(board.board[4, 3] == null ? "null" : "not null")}");
+            _logger.LogInformation($"shoot to board id: {dto.boardId} coords x: {dto.coords.X}, y: {dto.coords.Y}");
+            _logger.LogError($"Board ID: {board.Id}, Board Element at [4,3]: {board.board[dto.coords.X, dto.coords.Y].PanelState.ToString()}");
 
 
-            return Ok();
+            return Ok(new {Status = board.board[dto.coords.X, dto.coords.Y].PanelState.ToString()});
         }
 
     }

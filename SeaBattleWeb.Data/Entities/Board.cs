@@ -19,12 +19,12 @@ namespace SeaBattleWeb.Data.Entities
         }
 
         [NotMapped]
-        public Panel[,] board { get; set; }
+        public Panel[,] board = new Panel[9, 9];
 
         public Panel this[Coordinates coords]
         {
-            get => board[coords.Y, coords.X];
-            set => board[coords.Y, coords.X] = value;
+            get => board[coords.X, coords.Y];
+            set => board[coords.X, coords.Y] = value;
         }
 
         public void SerializeArray()

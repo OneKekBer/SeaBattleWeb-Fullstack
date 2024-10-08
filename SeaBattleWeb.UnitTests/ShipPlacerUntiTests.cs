@@ -50,7 +50,8 @@ namespace SeaBattleWeb.UnitTests
             var shipPlacer = new ShipPlacer();
 
             //Act
-            var coordinates = shipPlacer.GetShipCoordinates(5);
+            shipPlacer.FillEmptyBoard(board);
+            var coordinates = shipPlacer.GetShipCoordinates(board, 5);
             int coordinatesLength = coordinates.Count();
 
             //Assert
@@ -72,7 +73,7 @@ namespace SeaBattleWeb.UnitTests
 
             //Act
             shipPlacer.FillEmptyBoard(board);
-            var coords = shipPlacer.GetShipCoordinates(cruser.Size);
+            var coords = shipPlacer.GetShipCoordinates(board,cruser.Size);
             shipPlacer.AddShipsToBoard(board, coords, cruser);
 
             //Assert
@@ -81,27 +82,6 @@ namespace SeaBattleWeb.UnitTests
                 Assert.Equal(PanelState.ContainsShip, board[coord].PanelState);
                 _output.WriteLine($"{coord.Y} {coord.X} state:{board[coord].PanelState.ToString()}");
             }
-        }
-
-        public void ShootToTitle()
-        {
-            //Arrange
-            var board = new Board();
-            var shipPlacer = new ShipPlacer();
-            var cruser = new Cruiser();
-
-            //Act
-            shipPlacer.FillEmptyBoard(board);
-            var coords = shipPlacer.GetShipCoordinates(cruser.Size);
-            shipPlacer.AddShipsToBoard(board, coords, cruser);
-
-
-            foreach (var coord in coords)
-            {
-                Assert.Equal(PanelState.ContainsShip, board.board[coord.Y, coord.X].PanelState);
-                _output.WriteLine($"{coord.Y} {coord.X} state:{board.board[coord.Y, coord.X].PanelState.ToString()}");
-            }
-
         }
     }
 }

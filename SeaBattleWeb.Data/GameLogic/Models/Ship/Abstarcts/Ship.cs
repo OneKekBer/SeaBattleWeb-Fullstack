@@ -4,6 +4,11 @@ namespace SeaBattleWeb.GameLogic.Models.Abstracts
 {
     public abstract class Ship
     {
+        public Ship()
+        {
+            
+        }
+
         public int hitCount { get; private set; }
 
         public string Name { get; init; }
