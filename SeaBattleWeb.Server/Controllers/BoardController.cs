@@ -11,7 +11,7 @@ namespace SeaBattleWeb.Server.Controllers
     [ApiController()]
     [Route("api/board")]
     [EnableCors("AllowAllOrigins")]
-    public class BoardController : Controller
+    public class BoardController : ControllerBase
     {
         private readonly IBoardRepository _boardRepository;
         private readonly ILogger<BoardController> _logger;
@@ -32,12 +32,8 @@ namespace SeaBattleWeb.Server.Controllers
             var coords = shipPlacer.GetShipCoordinates(board, new Cruiser().Size);
             shipPlacer.AddShipsToBoard(board, coords, new Cruiser());
 
-
-            _logger.LogError($"create board {(board.board[4, 3] == null ? "null" : "not null")}");
-            _logger.LogError($"create board {(board.board[4, 3].PanelState.ToString())}");
-
-
             await _boardRepository.Add(board);
+
             return Ok(new { BoardId = board.Id, Coords = coords });
         }
 
@@ -63,17 +59,6 @@ namespace SeaBattleWeb.Server.Controllers
             _logger.LogInformation($"shoot to board id: {dto.boardId} coords x: {dto.coords.X}, y: {dto.coords.Y}");
 
             var board = await _boardRepository.GetById(dto.boardId);
-
-            if (board == null || board.board == null)
-            {
-                _logger.LogError("Board or board matrix is null");
-                return BadRequest("Board not found or not initialized");
-            }
-
-            
-
-            _logger.LogInformation($"Board ID: {board.Id}, Board Length: {board.board.Length}");
-
 
             return Ok(new { Status = board[new Coordinates(dto.coords.X, dto.coords.Y)].PanelState.ToString()});
         }

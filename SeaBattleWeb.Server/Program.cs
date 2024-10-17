@@ -48,13 +48,14 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
 }
 
+
+app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 
 app.UseRouting();
-
-app.UseCors("AllowAllOrigins");
 
 
 app.UseAuthorization();

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SeaBattleWeb.Data.Context;
 using SeaBattleWeb.Data.Entities;
+using SeaBattleWeb.Data.Exceptions;
 using SeaBattleWeb.Data.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,7 @@ namespace SeaBattleWeb.Data.Repository
 
         public async Task<Board> GetById(Guid id)
         {
-            var board = await _apiDatabase.Boards.FirstOrDefaultAsync((x) => x.Id == id) ?? throw new Exception($"board GetById not found with id:{id}");
+            var board = await _apiDatabase.Boards.FirstOrDefaultAsync((x) => x.Id == id) ?? throw new NotFoundInDatabaseException($"board GetById not found with id:{id}");
             board.DeserializeArray();
             return board;
         }

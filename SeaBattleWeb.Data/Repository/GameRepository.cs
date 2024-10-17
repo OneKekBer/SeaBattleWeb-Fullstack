@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SeaBattleWeb.Data.Context;
 using SeaBattleWeb.Data.Entities;
+using SeaBattleWeb.Data.Exceptions;
 using SeaBattleWeb.Data.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace SeaBattleWeb.Data.Repository
 
         public async Task<Game> GetById(Guid id)
         {
-            var game = await _apiDatabase.Games.FirstOrDefaultAsync(x => x.Id == id) ?? throw new Exception("Game repository, cant find by id: " + id);
+            var game = await _apiDatabase.Games.FirstOrDefaultAsync(x => x.Id == id) ?? throw new NotFoundInDatabaseException("Game repository, cant find by id: " + id);
 
             return game;
         }

@@ -1,18 +1,30 @@
+import { HubConnection } from '@microsoft/signalr'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector } from 'store/Hooks'
 
 interface LobbyPageProps {
 	ConnectToExistingGame(): Promise<void>
+	CreateNewGame(): Promise<void>
+	Connection: HubConnection
 }
 
-const LobbyPage: React.FC<LobbyPageProps> = ({ ConnectToExistingGame }) => {
+const LobbyPage: React.FC<LobbyPageProps> = ({
+	ConnectToExistingGame,
+	CreateNewGame,
+	Connection,
+}) => {
 	const games = useAppSelector(state => state.games.games)
 	const navigate = useNavigate()
 
 	const handleConnectButton = async (id: string) => {
 		await ConnectToExistingGame()
 		navigate(`/game/${id}`)
+	}
+
+	const handleCreateNewGameButton = async () => {
+		Connection?.invoke('CreateNewGame', {})
+		CreateNewGame()
 	}
 
 	return (
@@ -22,10 +34,13 @@ const LobbyPage: React.FC<LobbyPageProps> = ({ ConnectToExistingGame }) => {
 					<h1>Hello</h1>
 				</div>
 				<div className='flex flex-wrap'>
+					<button onClick={handleCreateNewGameButton}>
+						create new game
+					</button>
 					{games.map((item, i) => {
 						return (
 							<div
-								className='bg-bg-primary w-[200px] shadow-xl p-3 h-[300px] '
+								className='bg-bg-primary w-[200px] shadow-xl p-3 h-[300px]'
 								key={i}
 							>
 								<h1>{item.usersNames[0]}`s game</h1>
