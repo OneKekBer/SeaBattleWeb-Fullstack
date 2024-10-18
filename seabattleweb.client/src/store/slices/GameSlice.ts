@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import IGame from 'interfaces/IGame'
+import { IGame } from 'interfaces/IGame'
 
 // Define a type for the slice state
 interface CounterState {
@@ -9,7 +9,7 @@ interface CounterState {
 
 // Define the initial state using that type
 const initialState: CounterState = {
-	games: [{ id: '31231', state: 'idle', usersNames: ['murray'] }],
+	games: [],
 }
 
 export const gamesSlice = createSlice({

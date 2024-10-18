@@ -1,5 +1,11 @@
-export default interface IGame {
+export interface IGame {
 	id: string
-	state: 'idle' | 'active' | 'finished'
+	state: GameState
 	usersNames: string[]
+}
+
+export enum GameState {
+	idle = 0,
+	active = 1,
+	finished = 2,
 }

@@ -1,5 +1,5 @@
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr'
-import IGame from './interfaces/IGame'
+import { IGame } from './interfaces/IGame'
 import { addGames } from 'store/slices/GameSlice'
 import { AppDispatch } from 'store/Store'
 
