@@ -3,6 +3,7 @@ using SeaBattleWeb.Data.Context;
 using SeaBattleWeb.Data.Repository;
 using SeaBattleWeb.Data.Repository.Interfaces;
 using SeaBattleWeb.Server.Hubs;
+using SeaBattleWeb.Server.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,19 +51,22 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 
 }
-
-
 app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 
 app.UseRouting();
 
 
+app.UseCors();
+
 app.UseAuthorization();
+app.UseMiddleware<GlobalExceptionHandler>();
 
 app.MapControllers();
-
+    
 
 app.MapHub<GameHub>("/gameHub");
+app.MapHub<LobbyHub>("/lobbyHub");
+
 
 app.Run();

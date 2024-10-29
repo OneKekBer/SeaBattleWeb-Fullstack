@@ -83,5 +83,26 @@ namespace SeaBattleWeb.UnitTests
                 _output.WriteLine($"{coord.Y} {coord.X} state:{board[coord].PanelState.ToString()}");
             }
         }
+
+        [Fact]
+        public void GenerateBoard_WhenIntitalizeNewBoard_BoardContainsShips()
+        {
+            //Arrange
+            var board = new Board();
+            var shipPlacer = new ShipPlacer();
+
+            //Act
+            var allCoords = shipPlacer.GenerateBoard(board);
+
+            //Assert
+            foreach (var coords in allCoords)
+            {
+
+                foreach (var coord in coords)
+                {
+                    Assert.Equal(PanelState.ContainsShip, board[coord].PanelState);
+                }
+            }
+        }
     }
 }

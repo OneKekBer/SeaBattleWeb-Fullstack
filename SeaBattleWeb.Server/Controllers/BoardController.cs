@@ -22,38 +22,20 @@ namespace SeaBattleWeb.Server.Controllers
             _logger = logger;
         }
 
-        [HttpGet("create-board")]
-        public async Task<IActionResult> CreateBoard()
+        public record GenerateBoardDTO(Guid userId, Guid gameId);
+        [HttpPost("/generate")]
+        public async Task<IActionResult> GenerateBoard([FromBody] GenerateBoardDTO dto)
         {
-            var board = new Board();
-            var shipPlacer = new ShipPlacer();
-
-            shipPlacer.FillEmptyBoard(board);
-            var coords = shipPlacer.GetShipCoordinates(board, new Cruiser().Size);
-            shipPlacer.AddShipsToBoard(board, coords, new Cruiser());
-
-            await _boardRepository.Add(board);
-
-            return Ok(new { BoardId = board.Id, Coords = coords });
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetBoard()
-        {
-            var board = new Board();
+            var board = new Board(dto.userId, dto.gameId);
 
             var shipPlacer = new ShipPlacer();
-            var coords = shipPlacer.GetShipCoordinates(board,new Cruiser().Size);
+            var allCoords = shipPlacer.GenerateBoard(board);
 
-            shipPlacer.FillEmptyBoard(board);
-            shipPlacer.AddShipsToBoard(board, coords, new Cruiser());
-            
-            return Ok(board.board);
+            return Ok( new { Coordinates = allCoords, BoardId = board.Id }) ;
         }
 
-
+        public record ShootToBoardDTO(Guid boardId, Coordinates coords);
         [HttpPost("shoot-board")]
-
         public async Task<IActionResult> ShootToBoard([FromBody] ShootToBoardDTO dto)
         {
             _logger.LogInformation($"shoot to board id: {dto.boardId} coords x: {dto.coords.X}, y: {dto.coords.Y}");
@@ -62,28 +44,5 @@ namespace SeaBattleWeb.Server.Controllers
 
             return Ok(new { Status = board[new Coordinates(dto.coords.X, dto.coords.Y)].PanelState.ToString()});
         }
-
-        public record ShootToBoardDTO(Guid boardId, Coordinates coords);
-
-        [HttpPost("panel-status")]
-        public async Task<IActionResult> GetPanelStatus([FromBody] ShootToBoardDTO dto)
-        {
-            //_logger.LogInformation($"shoot to board id: {dto.boardId} coords x: {dto.coords.X}, y: {dto.coords.Y}");
-
-            var board = await _boardRepository.GetById(dto.boardId);
-
-            if (board == null || board.board == null)
-            {
-                _logger.LogError("Board or board matrix is null");
-                return BadRequest("Board not found or not initialized");
-            }
-
-            _logger.LogInformation($"shoot to board id: {dto.boardId} coords x: {dto.coords.X}, y: {dto.coords.Y}");
-            _logger.LogError($"Board ID: {board.Id}, Board Element at [4,3]: {board.board[dto.coords.X, dto.coords.Y].PanelState.ToString()}");
-
-
-            return Ok(new {Status = board.board[dto.coords.X, dto.coords.Y].PanelState.ToString()});
-        }
-
     }
 }

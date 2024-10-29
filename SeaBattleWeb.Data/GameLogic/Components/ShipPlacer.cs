@@ -1,6 +1,7 @@
 ﻿using SeaBattleWeb.Data.Entities;
 using SeaBattleWeb.Data.GameLogic.Models.Board;
 using SeaBattleWeb.Data.GameLogic.Models.Values;
+using SeaBattleWeb.GameLogic.Models;
 using SeaBattleWeb.GameLogic.Models.Abstracts;
 using System;
 
@@ -28,6 +29,23 @@ namespace SeaBattleWeb.GameLogic.Components
                     board[new Coordinates(i, j)] = new Panel();
                 }
             }
+        }
+
+        public List<IEnumerable<Coordinates>> GenerateBoard(Board board)
+        {
+            var allCoords = new List<IEnumerable<Coordinates>>();
+            FillEmptyBoard(board);
+
+            for (int i = 0; i < 4; i++)
+            {
+                var coords = GetShipCoordinates(board, 4);
+                
+                AddShipsToBoard(board, coords, new Cruiser());
+
+                allCoords.Add(coords);
+            }
+
+            return allCoords;
         }
 
         public void ShootToPanel(Board board, Coordinates coords)

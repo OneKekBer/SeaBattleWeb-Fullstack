@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
 using SeaBattleWeb.Data.Context;
 using SeaBattleWeb.Data.Entities;
 using SeaBattleWeb.Data.Exceptions;
@@ -25,6 +26,13 @@ namespace SeaBattleWeb.Data.Repository
             await _apiDatabase.SaveChangesAsync();
         }
 
+        public async Task AddNewUser(Guid gameId, Guid userId)
+        {
+            var game = await GetById(gameId);
+
+            await _apiDatabase.SaveChangesAsync();
+        }
+
         public Task<IEnumerable<Game>> GetAll()
         {
             throw new NotImplementedException();
@@ -47,6 +55,15 @@ namespace SeaBattleWeb.Data.Repository
         public async Task Remove(Game entity)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task StartGame(Guid gameId)
+        {
+            var game = await GetById(gameId);
+
+            game.State = GameState.Active;
+
+            await _apiDatabase.SaveChangesAsync();
         }
     }
 }

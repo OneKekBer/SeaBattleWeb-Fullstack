@@ -19,17 +19,9 @@ namespace SeaBattleWeb.Data.Entities
         {
             
         }
-
-        public Game(List<string> userNames)
-        {
-            UsersNames = userNames;
-        }
-
+        
         public Guid Id { get; init; } = Guid.NewGuid();
 
         public GameState State { get; set; } = GameState.Idle;
-        
-        public List<string> UsersNames { get; set; } = new List<string>();
-
     }
 }

@@ -3,16 +3,22 @@ using SeaBattleWeb.Data.Entities;
 using SeaBattleWeb.Data.Repository;
 using SeaBattleWeb.Data.Repository.Interfaces;
 using System;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SeaBattleWeb.Server.Hubs
 {
+    public record ConnectResult(string gameState, Guid gameId);
 
-    public interface IGameClient
+    public interface ILobbyClient
     {
-        public Task GetAllGames(IEnumerable<Game> games);
+        public Task Connect(ConnectResult connectResult);
+        
+        public Task UserJoined();
+
+        public Task StartGame();
     }
 
-    public class GameHub : Hub<IGameClient>
+    public class GameHub : Hub<ILobbyClient>
     {
         private readonly IGameRepository _gameRepository;
         private readonly ILogger<GameHub> _logger;
@@ -23,46 +29,25 @@ namespace SeaBattleWeb.Server.Hubs
             _logger = logger;
         }
 
-        public async Task Connect()
+        public record ConnectDTO(Guid userId, Guid gameId);
+        public async Task Connect(ConnectDTO dto)
         {
-            // return all games what Idle
-            var games = await _gameRepository.GetIdleGames();
-            await Clients.Client(Context.ConnectionId).GetAllGames(games);
+            _logger.LogInformation($"connect to game gameid: {dto.userId} userid:{dto.gameId} ");
+            var game = await _gameRepository.GetById(dto.gameId);
+
+            await _gameRepository.AddNewUser(dto.gameId, dto.userId);
+
+            await Clients.All.Connect(new ConnectResult(game.State.ToString(), dto.gameId));
         }
-
-        public async Task GetAllGames()
+        
+        public record StartGameDTO(Guid gameId);
+        public async Task StartGame(StartGameDTO dto)
         {
-            var games = await _gameRepository.GetIdleGames();
-            await Clients.Client(Context.ConnectionId).GetAllGames(games);
-        }
+            var game = await _gameRepository.GetById(dto.gameId);
 
-        public async Task CreateNewGame()
-        {
-            try
-            {
-                _logger.LogInformation("Create new game is working");
-                // Создаем новую игру
-                var game = new Game();
-
-                await _gameRepository.Add(game);
-
-                // Получаем список игр в состоянии Idle
-                var games = await _gameRepository.GetIdleGames();
-                await Clients.All.GetAllGames(games);
-
-                _logger.LogInformation("Game created successfully");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error in CreateNewGame: {ex.Message}");
-                throw;  // Пробросьте ошибку для SignalR, чтобы фронтенд мог её обработать
-            }
-        }
-
-
-        public async Task ConnectToExistingGame() 
-        {
+            await _gameRepository.StartGame(dto.gameId);
             
+            await Clients.All.StartGame();
         }
     }
 }

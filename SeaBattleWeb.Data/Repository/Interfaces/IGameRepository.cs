@@ -10,5 +10,9 @@ namespace SeaBattleWeb.Data.Repository.Interfaces
     public interface IGameRepository : IRepository<Game>
     {
         public Task<IEnumerable<Game>> GetIdleGames();
+
+        public Task AddNewUser(Guid gameId, Guid userId);
+
+        public Task StartGame(Guid gameId);
     }
 }
