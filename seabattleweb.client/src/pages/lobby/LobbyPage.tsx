@@ -1,6 +1,6 @@
 import { HubConnection } from '@microsoft/signalr'
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+
 import { useAppSelector } from 'store/Hooks'
 
 interface LobbyPageProps {
@@ -12,13 +12,7 @@ const LobbyPage: React.FC<LobbyPageProps> = ({
 	lobbyConnection,
 	ConnectToGame,
 }) => {
-	const games = useAppSelector(state => state.games.games)
-	const navigate = useNavigate()
-
-	const handleConnectButton = async (id: string) => {
-		navigate(`/game/${id}`)
-		lobbyConnection?.stop()
-	}
+	const games = useAppSelector(state => state.lobbies.lobbies)
 
 	const handleCreateNewGameButton = async () => {
 		lobbyConnection?.invoke('CreateNewGame')
@@ -40,7 +34,9 @@ const LobbyPage: React.FC<LobbyPageProps> = ({
 								className='bg-bg-primary w-[200px] shadow-xl p-3 h-[300px]'
 								key={i}
 							>
-								<div>{item.state.toLocaleString()}</div>
+								<div>{item.status}</div>
+								<div>{item.firstPlayerId}</div>
+								<div>{item.secondPlayerId}</div>
 								<div
 									onClick={() => {
 										ConnectToGame(item.id)

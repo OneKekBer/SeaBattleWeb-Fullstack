@@ -10,12 +10,16 @@ import {
 	HubConnectionBuilder,
 	LogLevel,
 } from '@microsoft/signalr'
-import { addGames } from 'store/slices/GameSlice'
+
 import { GameState, IGame } from 'interfaces/IGame'
+import { addLobby } from 'store/slices/LobbySlice'
+import { addGame } from 'store/slices/GameSlice'
 
 interface IGameConnect {
-	gameState: GameState
+	gameStatus: string
 	gameId: string
+	firstPlayerId: string
+	secondPlayerId: string
 }
 
 function App() {
@@ -38,9 +42,19 @@ function App() {
 
 		conn.on('Connect', (gameInfo: IGameConnect) => {
 			console.log('gameinfo:' + gameInfo.gameId)
-			console.log('gameinfo:' + gameInfo.gameState)
+			console.log('gameinfo:' + gameInfo.gameStatus)
 			navigate(`/game/${gameInfo.gameId}`)
+			dispatch(
+				addGame({
+					id: gameInfo.gameId,
+					status: gameInfo.gameStatus,
+					firstPlayerId: gameInfo.firstPlayerId,
+					secondPlayerId: gameInfo.secondPlayerId,
+				})
+			)
 		})
+
+		conn.on('StartGame', () => {})
 
 		try {
 			await conn.start()
@@ -65,7 +79,7 @@ function App() {
 			.build()
 
 		conn.on('GetAllGames', (games: IGame[]) => {
-			dispatch(addGames(games))
+			dispatch(addLobby(games))
 		})
 
 		try {
@@ -104,7 +118,7 @@ function App() {
 				/>
 				<Route
 					element={<GamePage gameConnection={gameConnection} />}
-					path='/game/:id'
+					path='/game/:gameId'
 				/>
 			</Routes>
 		</div>

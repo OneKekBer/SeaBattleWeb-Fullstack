@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import gamesSlice from './slices/GameSlice'
+import lobbySlice from './slices/LobbySlice'
 // ...
 
 export const store = configureStore({
 	reducer: {
 		games: gamesSlice,
+		lobbies: lobbySlice,
 	},
 })
 

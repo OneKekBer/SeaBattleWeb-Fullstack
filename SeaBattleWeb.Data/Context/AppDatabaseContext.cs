@@ -14,7 +14,7 @@ namespace SeaBattleWeb.Data.Context
             : base(options)
         {
         }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

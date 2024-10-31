@@ -14,16 +14,23 @@ const initialState: CounterState = {
 
 export const gamesSlice = createSlice({
 	name: 'games',
-	// `createSlice` will infer the state type from the `initialState` argument
 	initialState,
 	reducers: {
-		addGames: (state, action: PayloadAction<IGame[]>) => {
-			state.games = []
-			state.games = action.payload
+		addGame: (state, action: PayloadAction<IGame>) => {
+			const existingGame = state.games.find(
+				game => game.id === action.payload.id
+			)
+			if (!existingGame) {
+				state.games.push(action.payload)
+			}
 		},
 	},
 })
 
-export const { addGames } = gamesSlice.actions
+// Selector to find a game by its ID
+export const getGameById = (state: CounterState, id: string) =>
+	state.games.find(game => game.id === id)
+
+export const { addGame } = gamesSlice.actions
 
 export default gamesSlice.reducer

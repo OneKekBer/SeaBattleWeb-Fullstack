@@ -29,6 +29,12 @@ namespace SeaBattleWeb.Data.Repository
         public async Task AddNewUser(Guid gameId, Guid userId)
         {
             var game = await GetById(gameId);
+            if (game.FirstPlayerId == Guid.Empty)
+                game.FirstPlayerId = userId;
+            else if (game.SecondPlayerId == Guid.Empty)
+                game.SecondPlayerId = userId;
+            else 
+                throw new Exception("Cant be more than 2 users");
 
             await _apiDatabase.SaveChangesAsync();
         }

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace SeaBattleWeb.Server.Hubs
 {
-    public record ConnectResult(string gameState, Guid gameId);
+    public record ConnectResult(string gameStatus, Guid gameId, Guid firstPlayerId, Guid secondPlayerId);
 
     public interface ILobbyClient
     {
@@ -15,7 +15,7 @@ namespace SeaBattleWeb.Server.Hubs
         
         public Task UserJoined();
 
-        public Task StartGame();
+        public Task StartGame(ConnectResult connectResult);
     }
 
     public class GameHub : Hub<ILobbyClient>
@@ -34,10 +34,11 @@ namespace SeaBattleWeb.Server.Hubs
         {
             _logger.LogInformation($"connect to game gameid: {dto.userId} userid:{dto.gameId} ");
             var game = await _gameRepository.GetById(dto.gameId);
-
-            await _gameRepository.AddNewUser(dto.gameId, dto.userId);
-
-            await Clients.All.Connect(new ConnectResult(game.State.ToString(), dto.gameId));
+            
+            await _gameRepository.AddNewUser(game.Id, dto.userId);
+            
+            await Clients.Client(Context.ConnectionId).Connect(new ConnectResult(game.State.ToString(), dto.gameId, game.FirstPlayerId, game.SecondPlayerId));
+            await Clients.AllExcept(Context.ConnectionId).UserJoined();
         }
         
         public record StartGameDTO(Guid gameId);
@@ -47,7 +48,7 @@ namespace SeaBattleWeb.Server.Hubs
 
             await _gameRepository.StartGame(dto.gameId);
             
-            await Clients.All.StartGame();
+            await Clients.All.StartGame(new ConnectResult(game.State.ToString(), dto.gameId, game.FirstPlayerId, game.SecondPlayerId));
         }
     }
 }

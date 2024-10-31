@@ -1,82 +1,44 @@
-import React, { useEffect, useState } from 'react'
-import PanelComponent from './components/Panel'
-import { useParams } from 'react-router-dom'
-import axios from 'axios'
+import React from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import WaitSection from './section/WaitSection'
 import { HubConnection } from '@microsoft/signalr'
+import PlaySection from './section/PlaySection'
+import { getGameById } from 'store/slices/GameSlice'
+import { useSelector } from 'react-redux'
+import { RootState } from 'store/Store'
 
 interface GamePageInterface {
 	gameConnection: HubConnection | null
 }
 
 const GamePage: React.FC<GamePageInterface> = ({ gameConnection }) => {
-	const matrix = Array.from({ length: 9 }, () => Array(9).fill(0))
-	const [currentBoardId, setCurrentBoardId] = useState('')
-	const [gameStatus, setGameStatus] = useState<null | string>(null)
-	const { id } = useParams<{ id: string }>() // Extract id from params
-	console.log(id)
+	const navigate = useNavigate()
+	const { gameId } = useParams<{ gameId: string }>()
+	console.log(gameId)
 
-	const createBoard = async () => {
-		try {
-			const res = await fetch(
-				`${import.meta.env.VITE_API_URL}api/board/create-board`,
-				{ method: 'GET' }
-			)
+	// useEffect(() => {
+	// 	if (gameId == undefined) navigate('/')
+	// }, [gameId])
 
-			if (!res.ok) throw new Error('Failed to create board')
+	console.log('game id ' + gameId)
 
-			const data = await res.json()
-			if (data && data.boardId) {
-				setCurrentBoardId(data.boardId)
-			}
-		} catch (error) {
-			console.error('Error creating board:', error)
-		}
-	}
-
-	const getGameStatus = async () => {
-		try {
-			const res = await axios.post(
-				`${import.meta.env.VITE_API_URL}api/game/get-status`,
-				{ gameId: id }, // Pass id as part of the request body
-				{ headers: { 'Content-Type': 'application/json' } }
-			)
-			setGameStatus(res.data.status)
-			console.log(res.data.status)
-		} catch (error) {
-			console.error('Error fetching game status:', error)
-		}
-	}
-
-	useEffect(() => {
-		if (id) {
-			getGameStatus()
-		}
-	}, [id])
+	const game = useSelector((state: RootState) =>
+		getGameById(state.games, gameId)
+	)
 
 	return (
 		<div className='flex flex-col items-center justify-center bg-bg-primary'>
-			{gameStatus != null && (
-				<div>{gameStatus == 'Idle' ? <WaitSection /> : <div></div>}</div>
-			)}
-			{/* {currentBoardId !== '' && (
-				<div className='grid grid-cols-9 bg-bg-secondary'>
-					{matrix.map((row, rowIndex) =>
-						row.map((_, colIndex) => (
-							<PanelComponent
-								currentBoardId={currentBoardId}
-								key={`${rowIndex}-${colIndex}`}
-								ownCoords={`${rowIndex}-${colIndex}`}
-							/>
-						))
+			{game?.status != null && gameId ? (
+				<div>
+					{game.status == 'Idle' ? (
+						<WaitSection gameId={gameId} />
+					) : (
+						<PlaySection />
 					)}
 				</div>
+			) : (
+				<div>error</div>
 			)}
-
-			<div className='flex flex-col gap-3'></div>
-			<button onClick={createBoard}>new board</button>
-			<div>current board id: {currentBoardId}</div>
-			<div>Game Status: {gameStatus}</div> */}
 		</div>
 	)
 }

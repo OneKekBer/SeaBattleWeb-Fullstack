@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,5 +24,10 @@ namespace SeaBattleWeb.Data.Entities
         public Guid Id { get; init; } = Guid.NewGuid();
 
         public GameState State { get; set; } = GameState.Idle;
+        
+        public Guid FirstPlayerId { get; set; } = Guid.Empty;
+        
+        public Guid SecondPlayerId { get; set; } = Guid.Empty;
+
     }
 }
