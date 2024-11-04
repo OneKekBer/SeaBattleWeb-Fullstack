@@ -11,8 +11,10 @@ namespace SeaBattleWeb.Data.Repository.Interfaces
     {
         public Task<IEnumerable<Game>> GetIdleGames();
 
-        public Task AddNewUser(Guid gameId, Guid userId);
+        public Task AddNewUser(Guid gameId, Guid userId, string connectionId);
 
         public Task StartGame(Guid gameId);
+
+        public Task RemoveConnectionId(string connectionId);
     }
 }

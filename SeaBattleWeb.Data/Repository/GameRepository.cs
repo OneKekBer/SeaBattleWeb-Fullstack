@@ -21,20 +21,22 @@ namespace SeaBattleWeb.Data.Repository
         }
 
         public async Task Add(Game entity)
-        {
+        { 
             await _apiDatabase.Games.AddAsync(entity);
             await _apiDatabase.SaveChangesAsync();
         }
 
-        public async Task AddNewUser(Guid gameId, Guid userId)
+        public async Task AddNewUser(Guid gameId, Guid userId, string connectionId)
         {
             var game = await GetById(gameId);
             if (game.FirstPlayerId == Guid.Empty)
                 game.FirstPlayerId = userId;
-            else if (game.SecondPlayerId == Guid.Empty)
+            if (game.SecondPlayerId == Guid.Empty)
                 game.SecondPlayerId = userId;
-            else 
-                throw new Exception("Cant be more than 2 users");
+            else
+                throw new ArgumentException("Cannot add game more than two players");    
+            
+            game.ConnectionIds.Add(connectionId);
 
             await _apiDatabase.SaveChangesAsync();
         }
@@ -53,7 +55,7 @@ namespace SeaBattleWeb.Data.Repository
 
         public async Task<IEnumerable<Game>> GetIdleGames()
         {
-            var games = await _apiDatabase.Games.Where(item => item.State == GameState.Idle).AsNoTracking().ToListAsync();
+            var games = await _apiDatabase.Games.Where(item => item.State == GameState.Idle).AsNoTracking().Take(20).ToListAsync();
 
             return games;
         }
@@ -70,6 +72,11 @@ namespace SeaBattleWeb.Data.Repository
             game.State = GameState.Active;
 
             await _apiDatabase.SaveChangesAsync();
+        }
+
+        public Task RemoveConnectionId(string connectionId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

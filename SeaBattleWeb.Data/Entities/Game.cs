@@ -21,13 +21,10 @@ namespace SeaBattleWeb.Data.Entities
             
         }
         
-        public Guid Id { get; init; } = Guid.NewGuid();
-
-        public GameState State { get; set; } = GameState.Idle;
-        
+        public Guid Id { get; init; } = Guid.NewGuid(); public GameState State { get; set; } = GameState.Idle;
         public Guid FirstPlayerId { get; set; } = Guid.Empty;
-        
         public Guid SecondPlayerId { get; set; } = Guid.Empty;
-
+        public Guid CurrentPlayerId { get; set; } = Guid.Empty;
+        public List<string> ConnectionIds { get; set; } = new List<string>();
     }
 }

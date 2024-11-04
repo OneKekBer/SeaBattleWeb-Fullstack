@@ -16,9 +16,6 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDatabaseContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("WebApiDatabase")));
 
-
-
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",

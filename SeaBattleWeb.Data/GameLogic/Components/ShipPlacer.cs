@@ -16,10 +16,25 @@ public enum ShipDirections
 
 namespace SeaBattleWeb.GameLogic.Components
 {
-    public class ShipPlacer
+    public class ShipPlacer // q: can i do this class static??
     {
         Random random = new Random();
-      
+
+        public Board InitBoard(Guid userId, Guid gameId)
+        {
+            var board = new Board() {GameId = gameId, UserId = userId};
+            FillEmptyBoard(board);
+            
+            for (int i = 0; i < 4; i++)
+            {
+                var coords = GetShipCoordinates(board, 4);
+                
+                AddShipsToBoard(board, coords, new Cruiser());
+            }
+            
+            return board;
+        }
+        
         public void FillEmptyBoard(Board board) // пиздец 
         {
             for (int i = 0; i < board.board.GetLength(0); i++)

@@ -4,6 +4,8 @@ using SeaBattleWeb.Data.Repository;
 using SeaBattleWeb.Data.Repository.Interfaces;
 using System;
 using Microsoft.AspNetCore.Mvc;
+using SeaBattleWeb.Data.GameLogic.Models.Values;
+using SeaBattleWeb.GameLogic.Components;
 
 namespace SeaBattleWeb.Server.Hubs
 {
@@ -11,34 +13,43 @@ namespace SeaBattleWeb.Server.Hubs
 
     public interface ILobbyClient
     {
-        public Task Connect(ConnectResult connectResult);
+        public Task Connect();
         
         public Task UserJoined();
 
-        public Task StartGame(ConnectResult connectResult);
+        public Task StartGame();
     }
 
     public class GameHub : Hub<ILobbyClient>
     {
         private readonly IGameRepository _gameRepository;
+        private readonly IBoardRepository _boardRepository;
         private readonly ILogger<GameHub> _logger;
+        private readonly Lazy<ShipPlacer> _shipPlacer = new Lazy<ShipPlacer>(() => new ShipPlacer()); // q:did i correctly use lazy??
 
-        public GameHub(IGameRepository gameRepository, ILogger<GameHub> logger)
+
+        public GameHub(IGameRepository gameRepository, ILogger<GameHub> logger, IBoardRepository boardRepository)
         {
             _gameRepository = gameRepository;
             _logger = logger;
+            _boardRepository = boardRepository;
         }
 
         public record ConnectDTO(Guid userId, Guid gameId);
         public async Task Connect(ConnectDTO dto)
         {
+            
             _logger.LogInformation($"connect to game gameid: {dto.userId} userid:{dto.gameId} ");
             var game = await _gameRepository.GetById(dto.gameId);
             
-            await _gameRepository.AddNewUser(game.Id, dto.userId);
+            await _gameRepository.AddNewUser(dto.gameId, dto.userId, Context.ConnectionId); // work:need to handle when room is full error
+            var board = _shipPlacer.Value.InitBoard(dto.userId, dto.gameId);
+            await _boardRepository.Add(board);
             
-            await Clients.Client(Context.ConnectionId).Connect(new ConnectResult(game.State.ToString(), dto.gameId, game.FirstPlayerId, game.SecondPlayerId));
-            await Clients.AllExcept(Context.ConnectionId).UserJoined();
+            await Clients.Client(Context.ConnectionId).Connect();
+            
+            if(game.ConnectionIds.Count == 2)
+                await Clients.Client(game.ConnectionIds[0]).UserJoined();
         }
         
         public record StartGameDTO(Guid gameId);
@@ -46,9 +57,35 @@ namespace SeaBattleWeb.Server.Hubs
         {
             var game = await _gameRepository.GetById(dto.gameId);
 
-            await _gameRepository.StartGame(dto.gameId);
+            if (game.ConnectionIds.Count == 2 && game.ConnectionIds.Count == 2)
+            {
+                await _gameRepository.StartGame(dto.gameId);
+                
+                await Clients.All.StartGame();
+            }
+            else 
+                throw new HubException("Game cant be started");
+        }
+
+        public record ShootToBoardDTO(Guid currentPlayerId, Guid gameId, Guid enemyBoardId, Coordinates coordinates );
+        public async Task ShootToBoard(ShootToBoardDTO dto)
+        {
+            var board = _boardRepository.GetById(dto.enemyBoardId).Result;
             
-            await Clients.All.StartGame(new ConnectResult(game.State.ToString(), dto.gameId, game.FirstPlayerId, game.SecondPlayerId));
+            var game = _gameRepository.GetById(dto.gameId).Result;
+
+            if (game.CurrentPlayerId != dto.currentPlayerId)
+            {
+                throw new HubException("its not yours turn");  // need custom exceptions for website ui
+            }
+            
+            _shipPlacer.Value.ShootToPanel(board, dto.coordinates);
+
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+            
         }
     }
 }
