@@ -4,7 +4,6 @@ using SeaBattleWeb.Data.Repository;
 using SeaBattleWeb.Data.Repository.Interfaces;
 using System;
 using Microsoft.AspNetCore.Mvc;
-using SeaBattleWeb.Data.Extensions;
 using SeaBattleWeb.Data.GameLogic.Models.Values;
 using SeaBattleWeb.GameLogic.Components;
 
@@ -52,8 +51,8 @@ namespace SeaBattleWeb.Server.Hubs
             
             await Clients.Client(Context.ConnectionId).Connect();
             
-            if(game.FirstPlayer.IsNotEmpty())
-                await Clients.Client(game.FirstPlayer.ConnectionId).UserJoined();
+            if(game.FirstPlayerId != Guid.Empty)
+                await Clients.Client(game.FirstPlayerConnectionId).UserJoined();
         }
         
         public record StartGameDTO(Guid gameId);
@@ -61,7 +60,7 @@ namespace SeaBattleWeb.Server.Hubs
         {
             var game = await _gameRepository.GetById(dto.gameId);
 
-            if (game.FirstPlayer.IsNotEmpty() && game.SecondPlayer.IsNotEmpty())
+            if (game.FirstPlayerId != Guid.Empty && game.SecondPlayerId != Guid.Empty)
             {
                 await _gameRepository.StartGame(dto.gameId);
                 
@@ -86,13 +85,13 @@ namespace SeaBattleWeb.Server.Hubs
             _shipPlacer.Value.ShootToPanel(board, dto.coordinates);
 
             //what am i done?!
-            await Clients.Client(game.CurrentPlayerId == game.FirstPlayer.PLayerId
-                ? game.FirstPlayer.ConnectionId
-                : game.SecondPlayer.ConnectionId).ShootResult();
+            await Clients.Client(game.CurrentPlayerId == game.FirstPlayerId
+                ? game.FirstPlayerConnectionId
+                : game.SecondPlayerConnectionId).ShootResult();
             
-            await Clients.Client(game.CurrentPlayerId == game.FirstPlayer.PLayerId
-                ? game.SecondPlayer.ConnectionId
-                : game.FirstPlayer.ConnectionId).getShooted();
+            await Clients.Client(game.CurrentPlayerId == game.FirstPlayerId
+                ? game.SecondPlayerConnectionId
+                : game.FirstPlayerConnectionId).getShooted();
             
             await _gameRepository.ChangeCurrentPlayerId(dto.gameId);
             

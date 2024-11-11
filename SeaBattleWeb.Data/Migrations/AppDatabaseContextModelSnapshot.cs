@@ -52,8 +52,16 @@ namespace SeaBattleWeb.Data.Migrations
                     b.Property<Guid>("CurrentPlayerId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("FirstPlayerConnectionId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid>("FirstPlayerId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("SecondPlayerConnectionId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("SecondPlayerId")
                         .HasColumnType("uuid");
@@ -63,48 +71,7 @@ namespace SeaBattleWeb.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FirstPlayerId");
-
-                    b.HasIndex("SecondPlayerId");
-
                     b.ToTable("Games");
-                });
-
-            modelBuilder.Entity("SeaBattleWeb.Data.Entities.Player", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ConnectionId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("PLayerId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Player");
-                });
-
-            modelBuilder.Entity("SeaBattleWeb.Data.Entities.Game", b =>
-                {
-                    b.HasOne("SeaBattleWeb.Data.Entities.Player", "FirstPlayer")
-                        .WithMany()
-                        .HasForeignKey("FirstPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SeaBattleWeb.Data.Entities.Player", "SecondPlayer")
-                        .WithMany()
-                        .HasForeignKey("SecondPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FirstPlayer");
-
-                    b.Navigation("SecondPlayer");
                 });
 #pragma warning restore 612, 618
         }

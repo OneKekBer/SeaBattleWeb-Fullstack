@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SeaBattleWeb.Data.Extensions;
 
 namespace SeaBattleWeb.Data.Repository
 {
@@ -31,13 +30,19 @@ namespace SeaBattleWeb.Data.Repository
         {
             var game = await GetById(gameId);
 
-            if (game.FirstPlayer?.PLayerId == userId || game.SecondPlayer?.PLayerId == userId)
+            if (game.FirstPlayerId == userId || game.SecondPlayerId == userId)
                 throw new Exception("User already belongs to this game");
-            
-            if (!game.FirstPlayer.IsNotEmpty())
-                game.FirstPlayer = new Player() { PLayerId = userId, ConnectionId = connectionId};
-            else if (!game.SecondPlayer.IsNotEmpty())
-                game.SecondPlayer = new Player() { PLayerId = userId, ConnectionId = connectionId};
+
+            if (game.FirstPlayerId != Guid.Empty)
+            {
+                game.FirstPlayerId = userId;
+                game.FirstPlayerConnectionId = connectionId;
+            }
+            else if (game.SecondPlayerId != Guid.Empty)
+            {
+                game.SecondPlayerId = userId;
+                game.SecondPlayerConnectionId = connectionId;
+            }
             else
                 throw new ArgumentException("Cannot add game more than two players");//custom exception please!!
             
@@ -66,7 +71,7 @@ namespace SeaBattleWeb.Data.Repository
         public async Task ChangeCurrentPlayerId(Guid id) // q: should i use repositories for this kind of operations where 
         {
             var game = await GetById(id);
-            game.ChangeCurrentPlayerId();
+            // game.ChangeCurrentPlayerId();
             await _apiDatabase.SaveChangesAsync();
         }
 
