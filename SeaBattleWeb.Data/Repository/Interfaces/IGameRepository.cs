@@ -16,5 +16,7 @@ namespace SeaBattleWeb.Data.Repository.Interfaces
         public Task StartGame(Guid gameId);
 
         public Task RemoveConnectionId(string connectionId);
+
+        public Task ChangeCurrentPlayerId(Guid id);
     }
 }

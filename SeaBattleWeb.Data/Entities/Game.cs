@@ -20,11 +20,33 @@ namespace SeaBattleWeb.Data.Entities
         {
             
         }
+
+        public void ChangeCurrentPlayerId()
+        {
+            CurrentPlayerId =  CurrentPlayerId == FirstPlayer.PLayerId ? FirstPlayer.PLayerId : SecondPlayer.PLayerId;
+        } 
         
+        [Key]
         public Guid Id { get; init; } = Guid.NewGuid(); public GameState State { get; set; } = GameState.Idle;
-        public Guid FirstPlayerId { get; set; } = Guid.Empty;
-        public Guid SecondPlayerId { get; set; } = Guid.Empty;
+        public Player FirstPlayer { get; set; } = new Player();
+        public Player SecondPlayer { get; set; } = new Player();
         public Guid CurrentPlayerId { get; set; } = Guid.Empty;
-        public List<string> ConnectionIds { get; set; } = new List<string>();
+        
+        
+    }
+
+    public class Player
+    {
+        public Player()
+        {
+            
+        }
+        
+        [Key]
+        public Guid Id { get; set; } = Guid.NewGuid();
+        
+        public Guid PLayerId { get; set; } = Guid.Empty;
+        
+        public string ConnectionId { get; set; } = String.Empty;
     }
 }

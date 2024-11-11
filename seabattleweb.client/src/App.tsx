@@ -11,7 +11,7 @@ import {
 	LogLevel,
 } from '@microsoft/signalr'
 
-import { GameState, IGame } from 'interfaces/IGame'
+import { IGame } from 'interfaces/IGame'
 import { addLobby } from 'store/slices/LobbySlice'
 import { addGame } from 'store/slices/GameSlice'
 
@@ -58,10 +58,10 @@ function App() {
 
 		try {
 			await conn.start()
-			await conn?.invoke('Connect', {
-				userId: cookies['user-id'],
-				gameId: gameId,
-			})
+			// await conn?.invoke('Connect', {
+			// 	userId: cookies['user-id'],
+			// 	gameId: gameId,
+			// })
 			setGameConnection(conn)
 		} catch (err) {
 			console.error(
@@ -71,7 +71,7 @@ function App() {
 		}
 	}
 
-	const ConnectToHub = async () => {
+	const ConnectToLobby = async () => {
 		const conn = new HubConnectionBuilder()
 			.withUrl(import.meta.env.VITE_API_URL + 'lobbyHub')
 			.configureLogging(LogLevel.Information)
@@ -84,7 +84,7 @@ function App() {
 
 		try {
 			await conn.start()
-			await conn?.invoke('Connect')
+			// await conn?.invoke('Connect')
 			setLobbyConnection(conn)
 		} catch (err) {
 			console.error(
@@ -95,7 +95,7 @@ function App() {
 	}
 
 	useEffect(() => {
-		ConnectToHub()
+		ConnectToLobby()
 	}, [])
 
 	useEffect(() => {

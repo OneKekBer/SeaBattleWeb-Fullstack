@@ -4,6 +4,7 @@ using SeaBattleWeb.Data.Repository;
 using SeaBattleWeb.Data.Repository.Interfaces;
 using System;
 using Microsoft.AspNetCore.Mvc;
+using SeaBattleWeb.Data.Extensions;
 using SeaBattleWeb.Data.GameLogic.Models.Values;
 using SeaBattleWeb.GameLogic.Components;
 
@@ -18,6 +19,10 @@ namespace SeaBattleWeb.Server.Hubs
         public Task UserJoined();
 
         public Task StartGame();
+
+        public Task getShooted();
+
+        public Task ShootResult();
     }
 
     public class GameHub : Hub<ILobbyClient>
@@ -38,7 +43,6 @@ namespace SeaBattleWeb.Server.Hubs
         public record ConnectDTO(Guid userId, Guid gameId);
         public async Task Connect(ConnectDTO dto)
         {
-            
             _logger.LogInformation($"connect to game gameid: {dto.userId} userid:{dto.gameId} ");
             var game = await _gameRepository.GetById(dto.gameId);
             
@@ -48,8 +52,8 @@ namespace SeaBattleWeb.Server.Hubs
             
             await Clients.Client(Context.ConnectionId).Connect();
             
-            if(game.ConnectionIds.Count == 2)
-                await Clients.Client(game.ConnectionIds[0]).UserJoined();
+            if(game.FirstPlayer.IsNotEmpty())
+                await Clients.Client(game.FirstPlayer.ConnectionId).UserJoined();
         }
         
         public record StartGameDTO(Guid gameId);
@@ -57,7 +61,7 @@ namespace SeaBattleWeb.Server.Hubs
         {
             var game = await _gameRepository.GetById(dto.gameId);
 
-            if (game.ConnectionIds.Count == 2 && game.ConnectionIds.Count == 2)
+            if (game.FirstPlayer.IsNotEmpty() && game.SecondPlayer.IsNotEmpty())
             {
                 await _gameRepository.StartGame(dto.gameId);
                 
@@ -69,11 +73,11 @@ namespace SeaBattleWeb.Server.Hubs
 
         public record ShootToBoardDTO(Guid currentPlayerId, Guid gameId, Guid enemyBoardId, Coordinates coordinates );
         public async Task ShootToBoard(ShootToBoardDTO dto)
-        {
+        {   
             var board = _boardRepository.GetById(dto.enemyBoardId).Result;
             
             var game = _gameRepository.GetById(dto.gameId).Result;
-
+            
             if (game.CurrentPlayerId != dto.currentPlayerId)
             {
                 throw new HubException("its not yours turn");  // need custom exceptions for website ui
@@ -81,6 +85,17 @@ namespace SeaBattleWeb.Server.Hubs
             
             _shipPlacer.Value.ShootToPanel(board, dto.coordinates);
 
+            //what am i done?!
+            await Clients.Client(game.CurrentPlayerId == game.FirstPlayer.PLayerId
+                ? game.FirstPlayer.ConnectionId
+                : game.SecondPlayer.ConnectionId).ShootResult();
+            
+            await Clients.Client(game.CurrentPlayerId == game.FirstPlayer.PLayerId
+                ? game.SecondPlayer.ConnectionId
+                : game.FirstPlayer.ConnectionId).getShooted();
+            
+            await _gameRepository.ChangeCurrentPlayerId(dto.gameId);
+            
         }
 
         public override async Task OnConnectedAsync()

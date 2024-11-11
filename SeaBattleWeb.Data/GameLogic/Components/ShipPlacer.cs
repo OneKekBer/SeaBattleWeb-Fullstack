@@ -63,7 +63,7 @@ namespace SeaBattleWeb.GameLogic.Components
             return allCoords;
         }
 
-        public void ShootToPanel(Board board, Coordinates coords)
+        public PanelState ShootToPanel(Board board, Coordinates coords)
         {
             var panel = board.board[coords.X, coords.Y];
 
@@ -71,6 +71,8 @@ namespace SeaBattleWeb.GameLogic.Components
             {
                 panel.RegisterShot();
             }
+
+            return board.board[coords.X, coords.Y].PanelState;
         }
 
         public void AddShipsToBoard(Board board, IEnumerable<Coordinates> coords, Ship ship)
