@@ -28,7 +28,7 @@ const GamePage: React.FC<GamePageInterface> = ({ gameConnection }) => {
 
 	return (
 		<div className='flex flex-col items-center justify-center bg-bg-primary'>
-			{/* {game?.status != null && gameId ? (
+			{game?.status != null && gameId ? (
 				<div>
 					{game.status == 'Idle' ? (
 						<WaitSection gameId={gameId} />
@@ -38,9 +38,9 @@ const GamePage: React.FC<GamePageInterface> = ({ gameConnection }) => {
 				</div>
 			) : (
 				<div>error</div>
-			)} */}
+			)}
 
-			<PlaySection />
+			{/* <PlaySection /> */}
 		</div>
 	)
 }

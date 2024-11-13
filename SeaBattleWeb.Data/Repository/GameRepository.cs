@@ -29,10 +29,7 @@ namespace SeaBattleWeb.Data.Repository
         public async Task AddNewUser(Guid gameId, Guid userId, string connectionId)
         {
             var game = await GetById(gameId);
-
-            if (game.FirstPlayerId == userId || game.SecondPlayerId == userId)
-                throw new Exception("User already belongs to this game");
-
+            
             if (game.FirstPlayerId != Guid.Empty)
             {
                 game.FirstPlayerId = userId;

@@ -58,10 +58,10 @@ function App() {
 
 		try {
 			await conn.start()
-			// await conn?.invoke('Connect', {
-			// 	userId: cookies['user-id'],
-			// 	gameId: gameId,
-			// })
+			await conn?.invoke('Connect', {
+				userId: cookies['user-id'],
+				gameId: gameId,
+			})
 			setGameConnection(conn)
 		} catch (err) {
 			console.error(

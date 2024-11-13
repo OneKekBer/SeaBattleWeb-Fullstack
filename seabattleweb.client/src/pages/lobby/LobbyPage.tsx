@@ -39,6 +39,7 @@ const LobbyPage: React.FC<LobbyPageProps> = ({
 								<div>{item.secondPlayerId}</div>
 								<div
 									onClick={() => {
+										console.log(item.id)
 										ConnectToGame(item.id)
 									}}
 									className='px-4 py-2 mx-auto rounded-md btn'
