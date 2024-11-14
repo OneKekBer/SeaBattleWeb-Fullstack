@@ -20,6 +20,7 @@ interface IGameConnect {
 	gameId: string
 	firstPlayerId: string
 	secondPlayerId: string
+	name: string
 }
 
 function App() {
@@ -50,6 +51,7 @@ function App() {
 					status: gameInfo.gameStatus,
 					firstPlayerId: gameInfo.firstPlayerId,
 					secondPlayerId: gameInfo.secondPlayerId,
+					name: gameInfo.name,
 				})
 			)
 		})
@@ -84,7 +86,7 @@ function App() {
 
 		try {
 			await conn.start()
-			// await conn?.invoke('Connect')
+			await conn?.invoke('Connect')
 			setLobbyConnection(conn)
 		} catch (err) {
 			console.error(

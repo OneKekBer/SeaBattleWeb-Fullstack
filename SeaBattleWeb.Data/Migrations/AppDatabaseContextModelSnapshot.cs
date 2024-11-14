@@ -59,6 +59,10 @@ namespace SeaBattleWeb.Data.Migrations
                     b.Property<Guid>("FirstPlayerId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("SecondPlayerConnectionId")
                         .IsRequired()
                         .HasColumnType("text");

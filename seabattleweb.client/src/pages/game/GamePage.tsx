@@ -31,7 +31,7 @@ const GamePage: React.FC<GamePageInterface> = ({ gameConnection }) => {
 			{game?.status != null && gameId ? (
 				<div>
 					{game.status == 'Idle' ? (
-						<WaitSection gameId={gameId} />
+						<WaitSection game={game} gameId={gameId} />
 					) : (
 						<PlaySection />
 					)}

@@ -3,6 +3,7 @@ export interface IGame {
 	status: string
 	firstPlayerId: string
 	secondPlayerId: string
+	name: string
 }
 
 // export enum GameState {

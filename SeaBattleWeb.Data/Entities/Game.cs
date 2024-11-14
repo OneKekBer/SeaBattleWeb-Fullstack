@@ -20,10 +20,16 @@ namespace SeaBattleWeb.Data.Entities
         {
             
         }
+
+        public Game(string name)
+        {
+            Name = name;
+        }
         
         [Key]
         public Guid Id { get; init; } = Guid.NewGuid();
         public GameState State { get; set; } = GameState.Idle;
+        public string Name { get; set; } = string.Empty;
         public Guid CurrentPlayerId { get; set; } = Guid.Empty;
 
         public Guid FirstPlayerId { get; set; } = Guid.NewGuid();

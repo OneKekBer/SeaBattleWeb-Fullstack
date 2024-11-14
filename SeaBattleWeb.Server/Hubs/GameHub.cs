@@ -9,7 +9,7 @@ using SeaBattleWeb.GameLogic.Components;
 
 namespace SeaBattleWeb.Server.Hubs
 {
-    public record ConnectResult(string gameStatus, Guid gameId, Guid firstPlayerId, Guid secondPlayerId);
+    public record ConnectResult(string gameStatus, Guid gameId, Guid firstPlayerId, Guid secondPlayerId, string name);
 
     public interface ILobbyClient
     {
@@ -42,17 +42,18 @@ namespace SeaBattleWeb.Server.Hubs
         public record ConnectDTO(Guid userId, Guid gameId);
         public async Task Connect(ConnectDTO dto)
         {
+            
             _logger.LogInformation($"connect to game gameid: {dto.userId} userid:{dto.gameId} ");
             var game = await _gameRepository.GetById(dto.gameId);
             
             if (game.FirstPlayerId == dto.userId || game.SecondPlayerId == dto.userId)
-                await Clients.Client(Context.ConnectionId).Connect(new ConnectResult(game.State.ToString(),game.Id, game.FirstPlayerId, game.SecondPlayerId ));
+                await Clients.Client(Context.ConnectionId).Connect(new ConnectResult(game.State.ToString(), game.Id, game.FirstPlayerId, game.SecondPlayerId, game.Name ));
             
             await _gameRepository.AddNewUser(dto.gameId, dto.userId, Context.ConnectionId); // work:need to handle when room is full error
             var board = _shipPlacer.Value.InitBoard(dto.userId, dto.gameId);
             await _boardRepository.Add(board);
             
-            await Clients.Client(Context.ConnectionId).Connect(new ConnectResult(game.State.ToString(),game.Id, game.FirstPlayerId, game.SecondPlayerId ));
+            await Clients.Client(Context.ConnectionId).Connect(new ConnectResult(game.State.ToString(),game.Id, game.FirstPlayerId, game.SecondPlayerId, game.Name ));
             
             if(game.FirstPlayerId != Guid.Empty)
                 await Clients.Client(game.FirstPlayerConnectionId).UserJoined();

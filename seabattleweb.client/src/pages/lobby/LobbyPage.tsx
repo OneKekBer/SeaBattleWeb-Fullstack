@@ -13,9 +13,12 @@ const LobbyPage: React.FC<LobbyPageProps> = ({
 	ConnectToGame,
 }) => {
 	const games = useAppSelector(state => state.lobbies.lobbies)
+	const [name, setName] = React.useState('')
 
 	const handleCreateNewGameButton = async () => {
-		lobbyConnection?.invoke('CreateNewGame')
+		if (!name.trim()) return
+		lobbyConnection?.invoke('CreateNewGame', { name: name })
+		setName('')
 	}
 
 	return (
@@ -25,9 +28,21 @@ const LobbyPage: React.FC<LobbyPageProps> = ({
 					<h1>Hello</h1>
 				</div>
 				<div className='flex flex-wrap'>
-					<button onClick={handleCreateNewGameButton}>
-						create new game
-					</button>
+					<div className='flex w-full gap-2 mb-4'>
+						<input
+							type='text'
+							value={name}
+							onChange={e => setName(e.target.value)}
+							placeholder='Enter game name'
+							className='px-4 py-2 rounded-md bg-bg-primary'
+						/>
+						<button
+							onClick={handleCreateNewGameButton}
+							className='px-4 py-2 rounded-md btn'
+						>
+							Create new game
+						</button>
+					</div>
 					{games.map((item, i) => {
 						return (
 							<div
@@ -39,7 +54,6 @@ const LobbyPage: React.FC<LobbyPageProps> = ({
 								<div>{item.secondPlayerId}</div>
 								<div
 									onClick={() => {
-										console.log(item.id)
 										ConnectToGame(item.id)
 									}}
 									className='px-4 py-2 mx-auto rounded-md btn'
