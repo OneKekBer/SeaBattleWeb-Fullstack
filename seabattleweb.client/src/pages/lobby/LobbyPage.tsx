@@ -50,8 +50,7 @@ const LobbyPage: React.FC<LobbyPageProps> = ({
 								key={i}
 							>
 								<div>{item.status}</div>
-								<div>{item.firstPlayerId}</div>
-								<div>{item.secondPlayerId}</div>
+								<div>{item.name}</div>
 								<div
 									onClick={() => {
 										ConnectToGame(item.id)
