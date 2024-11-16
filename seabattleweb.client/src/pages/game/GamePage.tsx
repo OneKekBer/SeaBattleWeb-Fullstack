@@ -6,6 +6,7 @@ import PlaySection from './section/PlaySection'
 import { getGameById } from 'store/slices/GameSlice'
 import { useSelector } from 'react-redux'
 import { RootState } from 'store/Store'
+import { GameStatus } from 'interfaces/IGame'
 
 interface GamePageInterface {
 	gameConnection: HubConnection | null
@@ -16,12 +17,6 @@ const GamePage: React.FC<GamePageInterface> = ({ gameConnection }) => {
 	const { gameId } = useParams<{ gameId: string }>()
 	console.log(gameId)
 
-	// useEffect(() => {
-	// 	if (gameId == undefined) navigate('/')
-	// }, [gameId])
-
-	console.log('game id ' + gameId)
-
 	const game = useSelector((state: RootState) =>
 		getGameById(state.games, gameId)
 	)
@@ -30,8 +25,12 @@ const GamePage: React.FC<GamePageInterface> = ({ gameConnection }) => {
 		<div className='flex flex-col items-center justify-center bg-bg-primary'>
 			{game?.status != null && gameId ? (
 				<div>
-					{game.status == 'Idle' ? (
-						<WaitSection game={game} gameId={gameId} />
+					{game.status === GameStatus.Idle ? (
+						<WaitSection
+							gameConnection={gameConnection}
+							game={game}
+							gameId={gameId}
+						/>
 					) : (
 						<PlaySection />
 					)}

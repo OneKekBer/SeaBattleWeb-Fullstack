@@ -24,6 +24,6 @@ public class GameController : ControllerBase
     {
         var game = await _gameRepository.GetById(getStatusDto.gameId);
         
-        return Ok(new { Status = game.State.ToString() });
+        return Ok(new { Status = game.Status.ToString() });
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SeaBattleWeb.Data.Entities
 {
-    public enum GameState
+    public enum GameStatus
     {
         Idle = 0, 
         Active = 1,
@@ -28,16 +28,17 @@ namespace SeaBattleWeb.Data.Entities
         
         [Key]
         public Guid Id { get; init; } = Guid.NewGuid();
-        public GameState State { get; set; } = GameState.Idle;
+        public GameStatus Status { get; set; } = GameStatus.Idle;
         public string Name { get; set; } = string.Empty;
         public Guid CurrentPlayerId { get; set; } = Guid.Empty;
 
-        public Guid FirstPlayerId { get; set; } = Guid.NewGuid();
+        public Guid FirstPlayerId { get; set; } = Guid.Empty;
 
-        public Guid SecondPlayerId { get; set; } = Guid.NewGuid();
+        public Guid SecondPlayerId { get; set; } = Guid.Empty;
         
+        [MaxLength(90)]
         public string FirstPlayerConnectionId { get; set; } = String.Empty;
-
+        [MaxLength(90)]
         public string SecondPlayerConnectionId { get; set; } = String.Empty;
 
     }

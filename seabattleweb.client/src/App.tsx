@@ -13,15 +13,7 @@ import {
 
 import { IGame } from 'interfaces/IGame'
 import { addLobby } from 'store/slices/LobbySlice'
-import { addGame } from 'store/slices/GameSlice'
-
-interface IGameConnect {
-	gameStatus: string
-	gameId: string
-	firstPlayerId: string
-	secondPlayerId: string
-	name: string
-}
+import { addGame, updateGame } from 'store/slices/GameSlice'
 
 function App() {
 	const dispatch = useAppDispatch()
@@ -41,19 +33,15 @@ function App() {
 			.withAutomaticReconnect()
 			.build()
 
-		conn.on('Connect', (gameInfo: IGameConnect) => {
-			console.log('gameinfo:' + gameInfo.gameId)
-			console.log('gameinfo:' + gameInfo.gameStatus)
-			navigate(`/game/${gameInfo.gameId}`)
-			dispatch(
-				addGame({
-					id: gameInfo.gameId,
-					status: gameInfo.gameStatus,
-					firstPlayerId: gameInfo.firstPlayerId,
-					secondPlayerId: gameInfo.secondPlayerId,
-					name: gameInfo.name,
-				})
-			)
+		conn.on('UpdateGame', (game: IGame) => {
+			dispatch(updateGame(game))
+		})
+
+		conn.on('Connect', (game: IGame) => {
+			console.log(game)
+
+			navigate(`/game/${game.id}`)
+			dispatch(addGame(game))
 		})
 
 		conn.on('StartGame', () => {})

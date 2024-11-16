@@ -27,22 +27,23 @@ const LobbyPage: React.FC<LobbyPageProps> = ({
 				<div>
 					<h1>Hello</h1>
 				</div>
-				<div className='flex flex-wrap'>
-					<div className='flex w-full gap-2 mb-4'>
-						<input
-							type='text'
-							value={name}
-							onChange={e => setName(e.target.value)}
-							placeholder='Enter game name'
-							className='px-4 py-2 rounded-md bg-bg-primary'
-						/>
-						<button
-							onClick={handleCreateNewGameButton}
-							className='px-4 py-2 rounded-md btn'
-						>
-							Create new game
-						</button>
-					</div>
+				<div className='flex w-full gap-2 mb-4'>
+					<input
+						type='text'
+						value={name}
+						onChange={e => setName(e.target.value)}
+						placeholder='Enter game name'
+						className='px-4 py-2 rounded-md bg-bg-primary'
+					/>
+					<button
+						onClick={handleCreateNewGameButton}
+						className='px-4 py-2 rounded-md btn'
+					>
+						Create new game
+					</button>
+				</div>
+
+				<div className='max-h-[80vh] gap-4 flex flex-wrap w-full overflow-y-auto'>
 					{games.map((item, i) => {
 						return (
 							<div

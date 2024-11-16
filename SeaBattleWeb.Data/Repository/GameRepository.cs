@@ -30,12 +30,12 @@ namespace SeaBattleWeb.Data.Repository
         {
             var game = await GetById(gameId);
             
-            if (game.FirstPlayerId != Guid.Empty)
+            if (game.FirstPlayerId == Guid.Empty)
             {
                 game.FirstPlayerId = userId;
                 game.FirstPlayerConnectionId = connectionId;
             }
-            else if (game.SecondPlayerId != Guid.Empty)
+            else if (game.SecondPlayerId == Guid.Empty)
             {
                 game.SecondPlayerId = userId;
                 game.SecondPlayerConnectionId = connectionId;
@@ -60,7 +60,7 @@ namespace SeaBattleWeb.Data.Repository
 
         public async Task<IEnumerable<Game>> GetIdleGames()
         {
-            var games = await _apiDatabase.Games.Where(item => item.State == GameState.Idle).AsNoTracking().Take(20).ToListAsync();
+            var games = await _apiDatabase.Games.Where(item => item.Status == GameStatus.Idle).AsNoTracking().Take(20).ToListAsync();
 
             return games;
         }
@@ -77,11 +77,9 @@ namespace SeaBattleWeb.Data.Repository
             throw new NotImplementedException();
         }
 
-        public async Task StartGame(Guid gameId)
+        public async Task StartGame(Game game)
         {
-            var game = await GetById(gameId);
-
-            game.State = GameState.Active;
+            game.Status = GameStatus.Active;
 
             await _apiDatabase.SaveChangesAsync();
         }

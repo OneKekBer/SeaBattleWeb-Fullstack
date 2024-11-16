@@ -1,6 +1,6 @@
 export interface IGame {
 	id: string
-	status: string
+	status: GameStatus
 	firstPlayerId: string
 	secondPlayerId: string
 	name: string
@@ -11,3 +11,9 @@ export interface IGame {
 // 	active = 1,
 // 	finished = 2,
 // }
+
+export enum GameStatus {
+	Idle = 0,
+	Active = 1,
+	Finished = 2,
+}

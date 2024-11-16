@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SeaBattleWeb.Data.Context;
@@ -11,9 +12,11 @@ using SeaBattleWeb.Data.Context;
 namespace SeaBattleWeb.Data.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    partial class AppDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241114084658_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,8 +57,7 @@ namespace SeaBattleWeb.Data.Migrations
 
                     b.Property<string>("FirstPlayerConnectionId")
                         .IsRequired()
-                        .HasMaxLength(90)
-                        .HasColumnType("character varying(90)");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("FirstPlayerId")
                         .HasColumnType("uuid");
@@ -66,13 +68,12 @@ namespace SeaBattleWeb.Data.Migrations
 
                     b.Property<string>("SecondPlayerConnectionId")
                         .IsRequired()
-                        .HasMaxLength(90)
-                        .HasColumnType("character varying(90)");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("SecondPlayerId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("State")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

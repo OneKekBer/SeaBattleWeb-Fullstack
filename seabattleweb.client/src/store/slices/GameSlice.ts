@@ -24,6 +24,14 @@ export const gamesSlice = createSlice({
 				state.games.push(action.payload)
 			}
 		},
+		updateGame: (state, action: PayloadAction<IGame>) => {
+			const index = state.games.findIndex(
+				game => game.id === action.payload.id
+			)
+			if (index !== -1) {
+				state.games[index] = action.payload
+			}
+		},
 	},
 })
 
@@ -31,6 +39,6 @@ export const gamesSlice = createSlice({
 export const getGameById = (state: CounterState, id: string) =>
 	state.games.find(game => game.id === id)
 
-export const { addGame } = gamesSlice.actions
+export const { addGame, updateGame } = gamesSlice.actions
 
 export default gamesSlice.reducer

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SeaBattleWeb.Data.Context;
@@ -11,9 +12,11 @@ using SeaBattleWeb.Data.Context;
 namespace SeaBattleWeb.Data.Migrations
 {
     [DbContext(typeof(AppDatabaseContext))]
-    partial class AppDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241114142416_newmigrrr")]
+    partial class newmigrrr
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,7 +75,7 @@ namespace SeaBattleWeb.Data.Migrations
                     b.Property<Guid>("SecondPlayerId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("State")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
